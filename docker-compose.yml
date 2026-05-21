@@ -88,12 +88,16 @@ services:
       LDAP_SYNC_CRON: ${LDAP_SYNC_CRON}
       
     ports:
-      - "8080:8080"
+      - "8097:8080"
   frontend:
-    image: intelloop/atlas-cmms-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: atlas-cmms-frontend-custom
     container_name: atlas-cmms-frontend
     environment:
         API_URL: ${PUBLIC_API_URL}
+        HOME_URL: ${PUBLIC_FRONT_URL}
         GOOGLE_KEY: ${GOOGLE_KEY:- }
         GOOGLE_TRACKING_ID: ${GOOGLE_TRACKING_ID:- }
         INVITATION_VIA_EMAIL: ${INVITATION_VIA_EMAIL:-false}
@@ -110,7 +114,7 @@ services:
         RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY:- }
         LDAP_ENABLED: ${LDAP_ENABLED:-false}
     ports:
-      - "3000:3000"
+      - "8096:3000"
     depends_on:
       - api
   minio:

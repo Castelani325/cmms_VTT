@@ -24,7 +24,7 @@ ReactDOM.render(
     <Provider store={store}>
       <SidebarProvider>
         <TitleProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <ScrollTop />
             <ZendeskProvider apiKey={zendeskKey}>
               <AuthProvider>
