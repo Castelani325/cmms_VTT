@@ -54,21 +54,20 @@ public class LicenseService {
     private volatile long lastCheckedTime = 0;
 
     public synchronized LicensingState getLicensingState() {
-        if (isCacheValid()) {
-            return buildLicensingStateFromCache();
-        }
-
-        if (!hasLicenseKey() && !hasLicenseFile()) {
-            return clearCacheAndReturnInvalid();
-        }
-
-        // Try license file validation first if available
-        if (hasLicenseFile()) {
-            return validateAndCacheLicenseFile();
-        }
-
-        // Fall back to Keygen API validation
-        return validateAndCacheLicenseKey();
+        // Self-hosted build: licensing is disabled. Always report a fully valid
+        // state with every entitlement granted, so that no usage limit or feature
+        // gate is ever enforced. Both the backend checks (via hasEntitlement) and
+        // the frontend (via the /license/state endpoint) read this single method.
+        return LicensingState.builder()
+                .hasLicense(false)
+                .valid(true)
+                .planName("Self-Hosted")
+                .entitlements(Arrays.stream(LicenseEntitlement.values())
+                        .map(Enum::toString)
+                        .collect(Collectors.toSet()))
+                .expirationDate(null)
+                .usersCount(Integer.MAX_VALUE)
+                .build();
     }
 
     public boolean isSSOEnabled() {

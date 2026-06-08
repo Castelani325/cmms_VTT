@@ -28,8 +28,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         if (enableCors) {
+            // Self-hosted: allow any origin (pattern-based so it works with
+            // credentials and regardless of the path/port the frontend is served on,
+            // e.g. when PUBLIC_FRONT_URL includes a context path like /Atlas).
             registry.addMapping("/**")
-                    .allowedOrigins(frontendUrl, frontendHomeUrl)
+                    .allowedOriginPatterns("*")
                     .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
                     .allowCredentials(true)
                     .maxAge(MAX_AGE_SECS);
